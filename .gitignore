@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables (NEVER commit your API keys!)
+.env
+*.env
+!.env.example
+
+# Database files
+*.db
+*.sqlite3
+chroma_db/
+
+# Uploads
+uploads/
+
+# Logs
+*.log
+
+# Node.js
+node_modules/
+.next/
+.turbo/
+out/
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Sample resumes (optional, remove this line if you want to include them)
+sample_resumes/*.pdf
+
+# Scripts
+generate_resumes.py

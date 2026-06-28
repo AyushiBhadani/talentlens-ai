@@ -1,0 +1,53 @@
+ARJUN SHARMA
+Email: arjun.sharma@gmail.com | Phone: +91-9876543210
+Location: Bangalore, India | GitHub: github.com/arjunsharma | LinkedIn: linkedin.com/in/arjunsharma
+
+OBJECTIVE
+Motivated and passionate Computer Science student seeking a Python Software Engineering Internship where I can apply my backend development and data processing skills in a real-world environment.
+
+EDUCATION
+B.Tech in Computer Science Engineering
+Visvesvaraya Technological University (VTU), Bangalore
+CGPA: 8.7 / 10 | Expected Graduation: June 2025
+
+SKILLS
+- Programming Languages: Python, JavaScript, SQL, C++
+- Frameworks & Libraries: FastAPI, Flask, Pandas, NumPy, Scikit-learn
+- Databases: PostgreSQL, MySQL, SQLite
+- Tools: Git, GitHub, Postman, Docker (basic), VS Code
+- Concepts: REST APIs, OOP, Data Structures, Algorithms, Unit Testing
+
+PROJECTS
+
+1. Student Result Management System (FastAPI + PostgreSQL)
+   - Built a full REST API backend for managing student exam results.
+   - Implemented authentication using JWT tokens.
+   - Technologies: Python, FastAPI, PostgreSQL, SQLAlchemy, Alembic
+   - GitHub: github.com/arjunsharma/student-result-api
+
+2. Movie Recommendation Engine
+   - Developed a content-based filtering recommendation system using Pandas and Scikit-learn.
+   - Achieved 87% accuracy on a 10,000-movie dataset.
+   - Technologies: Python, Pandas, NumPy, Scikit-learn, Flask
+
+3. Personal Finance Tracker (CLI App)
+   - Built a command-line personal expense tracker with CSV report generation.
+   - Technologies: Python, SQLite, Matplotlib
+
+EXPERIENCE
+
+Python Development Intern | CodeCraft Labs, Bangalore (Remote)
+June 2023 - August 2023 (3 Months)
+- Assisted in developing REST API endpoints using Flask for a client billing application.
+- Wrote 40+ unit tests using pytest, improving code coverage from 60% to 92%.
+- Collaborated with a 4-person team using Git and GitHub for version control.
+
+CERTIFICATIONS
+- Python for Everybody — University of Michigan (Coursera) | 2023
+- REST APIs with Flask and Python — Udemy | 2023
+- Git & GitHub for Beginners — Udemy | 2022
+
+ACHIEVEMENTS
+- Top 10 finalist at VTU Hackathon 2023 (Team of 3, built an AI study planner in 24 hours)
+- Solved 200+ problems on LeetCode (Rating: 1650)
+- Academic topper in "Data Structures and Algorithms" course (Scored 97/100)

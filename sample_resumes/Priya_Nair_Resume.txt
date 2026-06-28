@@ -1,0 +1,53 @@
+PRIYA NAIR
+Email: priya.nair@outlook.com | Phone: +91-8765432109
+Location: Chennai, India | LinkedIn: linkedin.com/in/priyanair
+
+OBJECTIVE
+Final year B.Sc Computer Science student with strong fundamentals in Python and web technologies. Looking for an internship opportunity to gain hands-on industry experience in software development.
+
+EDUCATION
+B.Sc in Computer Science
+Anna University, Chennai
+CGPA: 7.2 / 10 | Expected Graduation: May 2025
+
+SKILLS
+- Programming: Python (Intermediate), HTML, CSS, JavaScript (Basic)
+- Libraries: Pandas, Matplotlib, Requests
+- Framework: Django (Basic), Flask (Basic)
+- Database: MySQL
+- Tools: Git, Postman, Jupyter Notebook
+- Concepts: OOP, REST APIs (theoretical), Data Analysis
+
+PROJECTS
+
+1. COVID-19 Data Dashboard
+   - Created a data visualization dashboard using Python and Matplotlib to plot COVID case trends by state.
+   - Fetched live data using the Requests library from a public API.
+   - Technologies: Python, Pandas, Matplotlib, Requests
+
+2. Simple Blog Application (Django)
+   - Developed a basic blog web application where users can create, edit, and delete posts.
+   - Implemented basic user authentication (login/logout).
+   - Technologies: Python, Django, SQLite, HTML/CSS
+
+3. Library Management System (Python + MySQL)
+   - Built a command-line library management system for a college mini-project.
+   - Implemented CRUD operations on MySQL database.
+   - Technologies: Python, MySQL, mysql-connector-python
+
+EXPERIENCE
+No formal industry experience yet.
+
+Internship Simulation Project | college final year project
+January 2024 - April 2024
+- Worked in a group of 4 to simulate a real-world software development cycle.
+- Was responsible for the backend Python logic and database design.
+
+CERTIFICATIONS
+- Introduction to Python Programming — NPTEL | 2022
+- Web Development Fundamentals — Coursera | 2023
+
+ACHIEVEMENTS
+- Participated in college-level coding competition (secured 2nd place in her department)
+- Volunteer organizer for college Annual Tech Symposium 2023
+- Completed 30 Days of Python Challenge on HackerRank
