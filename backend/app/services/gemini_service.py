@@ -1,27 +1,38 @@
 """
-TalentLens AI — Groq AI Service
-Handles all LLM operations: JD analysis, resume analysis, matching explanations, LENS assistant.
-(File kept as gemini_service.py to avoid breaking imports in hackathon timeline)
+TalentLens AI — Google Gemini AI Service
+Handles all LLM operations using Gemini 1.5 Flash
 """
 import json
 import logging
 import re
 from typing import Any
 
-from groq import AsyncGroq
-
+import google.generativeai as genai
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-def _get_client():
-    """Initialize and return the Groq client."""
-    if not settings.GROQ_API_KEY:
-        raise ValueError(
-            "GROQ_API_KEY not set. Please add it to your .env file."
-        )
-    return AsyncGroq(api_key=settings.GROQ_API_KEY)
+# Configure Gemini once
+if settings.GEMINI_API_KEY:
+    genai.configure(api_key=settings.GEMINI_API_KEY)
+else:
+    logger.warning("GEMINI_API_KEY not found in environment. AI features will fail!")
 
+def _get_model(is_json: bool = True):
+    # Gemini 1.5 Flash is extremely fast and has huge rate limits
+    model_name = "gemini-1.5-flash"
+    
+    if is_json:
+        generation_config = genai.types.GenerationConfig(
+            temperature=0.1,
+            response_mime_type="application/json"
+        )
+    else:
+        generation_config = genai.types.GenerationConfig(
+            temperature=0.4,
+        )
+        
+    return genai.GenerativeModel(model_name, generation_config=generation_config)
 
 def _parse_json_response(text: str) -> Any:
     """Extract JSON from LLM response, handling markdown code blocks."""
@@ -39,27 +50,20 @@ def _parse_json_response(text: str) -> Any:
             return json.loads(match.group(1))
         raise ValueError(f"Could not parse JSON from response: {text[:200]}")
 
-
-async def _call_groq(prompt: str, is_json: bool = True) -> str:
-    client = _get_client()
+async def _call_gemini(prompt: str, is_json: bool = True) -> str:
+    if not settings.GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY not set in .env")
+        
+    model = _get_model(is_json)
     try:
-        response = await client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.3-70b-versatile",
-            temperature=0.1,
-            response_format={"type": "json_object"} if is_json else None
-        )
-        return response.choices[0].message.content
+        response = await model.generate_content_async(prompt)
+        return response.text
     except Exception as e:
-        logger.error(f"Groq API error: {e}")
-        # Fallback to smaller model if 70b hits rate limits
-        response = await client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
-            model="llama-3.1-8b-instant",
-            temperature=0.1,
-            response_format={"type": "json_object"} if is_json else None
-        )
-        return response.choices[0].message.content
+        logger.error(f"Gemini API error: {e}")
+        # Try once more without JSON mime type fallback
+        fallback_model = _get_model(is_json=False)
+        response = await fallback_model.generate_content_async(prompt)
+        return response.text
 
 
 async def analyze_job_description(jd_text: str) -> dict:
@@ -89,7 +93,7 @@ Return ONLY a valid JSON object with this exact structure:
 }}
 
 Be comprehensive. Extract implicit skills too (e.g., if they mention microservices, include Docker/Kubernetes as implicit preferences)."""
-    response_text = await _call_groq(prompt)
+    response_text = await _call_gemini(prompt)
     return _parse_json_response(response_text)
 
 
@@ -97,7 +101,7 @@ async def analyze_resume(resume_text: str) -> dict:
     prompt = f"""You are an expert resume analyst and HR professional. Analyze this resume deeply and extract comprehensive structured data.
 
 RESUME:
-{resume_text[:8000]}  
+{resume_text[:15000]}  
 
 Return ONLY a valid JSON object with this exact structure:
 {{
@@ -145,7 +149,7 @@ Return ONLY a valid JSON object with this exact structure:
 }}
 
 Infer implicit skills from projects and experience. Be comprehensive."""
-    response_text = await _call_groq(prompt)
+    response_text = await _call_gemini(prompt)
     return _parse_json_response(response_text)
 
 
@@ -198,7 +202,7 @@ Return ONLY a valid JSON object:
   ],
   "growth_potential": "assessment of candidate's growth trajectory"
 }}"""
-    response_text = await _call_groq(prompt)
+    response_text = await _call_gemini(prompt)
     return _parse_json_response(response_text)
 
 
@@ -236,12 +240,11 @@ Return ONLY valid JSON:
 }}
 
 If no issues found, return risk_score: 0.05 and empty flags array."""
-    response_text = await _call_groq(prompt)
+    response_text = await _call_gemini(prompt)
     return _parse_json_response(response_text)
 
 
 async def chat_with_lens(message: str, conversation_history: list, context: dict) -> str:
-    client = _get_client()
     context_str = f"""
 CURRENT APPLICATION CONTEXT:
 - Total Jobs: {context.get('total_jobs', 0)}
@@ -262,24 +265,22 @@ You help recruiters by:
 - Explaining AI decisions
 
 Be conversational, insightful, and actionable. If asked to do something you cannot do (like access data not in context), explain what information you'd need.
-
 Always format your response in clean markdown when appropriate."""
 
-    messages = [{"role": "system", "content": system_prompt}]
+    # Build prompt from history
+    full_prompt = system_prompt + "\n\n--- CHAT HISTORY ---\n"
     for msg in conversation_history[-10:]:
-        messages.append({"role": msg["role"], "content": msg["content"]})
-    messages.append({"role": "user", "content": message})
+        role = "USER" if msg["role"] == "user" else "LENS AI"
+        full_prompt += f"{role}: {msg['content']}\n\n"
+    
+    full_prompt += f"USER: {message}\nLENS AI:"
     
     try:
-        response = await client.chat.completions.create(
-            messages=messages,
-            model="llama-3.3-70b-versatile",
-            temperature=0.4,
-        )
-        return response.choices[0].message.content
+        response_text = await _call_gemini(full_prompt, is_json=False)
+        return response_text
     except Exception as e:
-        logger.error(f"Groq API chat error: {e}")
-        return "I'm having trouble connecting to my AI brain (Groq). Please check your API key!"
+        logger.error(f"Gemini API chat error: {e}")
+        return "I'm having trouble connecting to my AI brain (Gemini). Please check your API key!"
 
 
 async def generate_comparison(candidate_a: dict, candidate_b: dict, job: dict) -> dict:
@@ -311,5 +312,5 @@ Return ONLY valid JSON:
   "culture_fit_notes": "assessment based on background",
   "summary": "3-4 sentence comparative summary"
 }}"""
-    response_text = await _call_groq(prompt)
+    response_text = await _call_gemini(prompt)
     return _parse_json_response(response_text)

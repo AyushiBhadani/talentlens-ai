@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     
     # API Keys — SET THESE IN YOUR .env FILE
     GROQ_API_KEY: str = ""
+    GEMINI_API_KEY: str = ""
     
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./talentlens.db"
